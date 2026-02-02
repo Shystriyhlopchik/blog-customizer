@@ -11,6 +11,7 @@ import {
 	ArticleStateType,
 	backgroundColors,
 	contentWidthArr,
+	defaultArticleState,
 	fontColors,
 	fontFamilyOptions,
 	fontSizeOptions,
@@ -18,14 +19,7 @@ import {
 } from 'src/constants/articleProps';
 
 type ArticleParamsFormProps = {
-	articleState: ArticleStateType;
-	handleFontFamilyChange: (select: OptionType) => void;
-	handleFontSizeChange: (select: OptionType) => void;
-	handleFontColorChange: (select: OptionType) => void;
-	handleBackgroundColorChange: (select: OptionType) => void;
-	handleContentWidthChange: (select: OptionType) => void;
-	applySideBarState: (event: FormEvent) => void;
-	resetSideBarState: () => void;
+	setArticleState: React.Dispatch<React.SetStateAction<ArticleStateType>>;
 };
 
 type TUseHandleClickOutsideOptions = {
@@ -63,17 +57,42 @@ const useHandleClickOutside = (prop: TUseHandleClickOutsideOptions) => {
 };
 
 export const ArticleParamsForm = ({
-	articleState,
-	handleFontFamilyChange,
-	handleFontSizeChange,
-	handleFontColorChange,
-	handleBackgroundColorChange,
-	handleContentWidthChange,
-	applySideBarState,
-	resetSideBarState,
+	setArticleState,
 }: ArticleParamsFormProps) => {
+	const [sideBarState, setSideBarState] =
+		useState<ArticleStateType>(defaultArticleState);
 	const [isOpen, setOpen] = useState(false);
 	const ref = useRef<HTMLFormElement | null>(null);
+
+	const applySideBarState = (event: FormEvent) => {
+		event.preventDefault();
+		setArticleState({ ...sideBarState });
+	};
+
+	const handleFontFamilyChange = (select: OptionType) => {
+		setSideBarState({ ...sideBarState, fontFamilyOption: select });
+	};
+
+	const handleFontSizeChange = (select: OptionType) => {
+		setSideBarState({ ...sideBarState, fontSizeOption: select });
+	};
+
+	const handleFontColorChange = (select: OptionType) => {
+		setSideBarState({ ...sideBarState, fontColor: select });
+	};
+
+	const handleBackgroundColorChange = (select: OptionType) => {
+		setSideBarState({ ...sideBarState, backgroundColor: select });
+	};
+
+	const handleContentWidthChange = (select: OptionType) => {
+		setSideBarState({ ...sideBarState, contentWidth: select });
+	};
+
+	const resetSideBarState = () => {
+		setArticleState(defaultArticleState);
+		setSideBarState(defaultArticleState);
+	};
 
 	useHandleClickOutside({ isOpen, asideRef: ref, setOpen });
 
@@ -95,7 +114,7 @@ export const ArticleParamsForm = ({
 						задайте параметры
 					</Text>
 					<Select
-						selected={articleState.fontFamilyOption}
+						selected={sideBarState.fontFamilyOption}
 						options={fontFamilyOptions}
 						title='шрифт'
 						onChange={handleFontFamilyChange}
@@ -103,25 +122,25 @@ export const ArticleParamsForm = ({
 					<RadioGroup
 						name={'fontSize'}
 						options={fontSizeOptions}
-						selected={articleState.fontSizeOption}
+						selected={sideBarState.fontSizeOption}
 						title='размер шрифта'
 						onChange={handleFontSizeChange}
 					/>
 					<Select
-						selected={articleState.fontColor}
+						selected={sideBarState.fontColor}
 						options={fontColors}
 						title='цвет шрифта'
 						onChange={handleFontColorChange}
 					/>
 					<Separator />
 					<Select
-						selected={articleState.backgroundColor}
+						selected={sideBarState.backgroundColor}
 						options={backgroundColors}
 						title='цвет фона'
 						onChange={handleBackgroundColorChange}
 					/>
 					<Select
-						selected={articleState.contentWidth}
+						selected={sideBarState.contentWidth}
 						options={contentWidthArr}
 						title='ширина контента'
 						onChange={handleContentWidthChange}
